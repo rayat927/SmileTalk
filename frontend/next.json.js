@@ -1,0 +1,3 @@
+{
+    swcMinify: false
+}

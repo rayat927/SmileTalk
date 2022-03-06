@@ -5,8 +5,11 @@ import styles from '../styles/Home.module.css'
 export default function Home() {
   return (
     <div className={styles.container}>
-      <div>
-        
+      <div className={styles.contactList}></div>
+      <div className={styles.chat}>
+        <div className={styles.chatInput}>
+          <input placeholder='mention your problem'></input>
+        </div>
       </div>
     </div>
   )

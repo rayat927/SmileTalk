@@ -3,6 +3,8 @@ const socketio = require('socket.io')
 const http = require('http')
 const cors = require('cors')
 const userRoutes = require('./routes/userRoutes')
+const messageRoutes = require('./routes/messageRoutes')
+const chatbotRoutes = require('./routes/chatbotRoutes')
 require('dotenv').config()
 
 
@@ -10,7 +12,11 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 const server = http.createServer(app)
-const io = socketio(server)
+const io = socketio(server, {
+    cors: {
+        origin: "http://localhost:3000"
+    }
+})
 const mongoose = require('mongoose')
 
 //database connection
@@ -19,31 +25,52 @@ mongoose.connect(process.env.MONGODB_CONNECT)
     .catch(e => console.log(e))
 
 // socket.io connection
-const { removeUser, getUser } = require('./users');
+const { addTherapist, removeUser, getUser, therapists } = require('./users');
 
 app.get("/", (req, res) => {
     res.json({message: "testing"})
 })
 
 
-io.on('connect', (socket) => {
+io.on('connection', (socket) => {
     console.log(socket.id);
 
-    socket.on('sendMessage', (message, callback) => {
-        const user = getUser(socket.id)
-        io.to(user.account).emit('message', {user: user.name, text: message})
+    socket.on("addUser", (userId, role) => {
+        addTherapist(userId,role, socket.id)
+        io.emit("getUsers", therapists)
+    })
 
-        callback();
+    // socket.on('sendMessage', (message, callback) => {
+    //     const user = getUser(socket.id)
+    //     io.to(user.account).emit('message', {user: user.name, text: message})
+
+    //     callback();
+    // })
+
+    socket.on('sendProblemMessage', ({message}) => {
+        socket.emit('sendProblemMessage', {
+            message
+        })
+    })
+
+    socket.on('sendMessage', ({message, to}) => {
+        socket.emit('sendMessage', {
+            message,
+            from: socket.id
+        })
     })
 
     socket.on('disconnect', () => {
-        const user = removeUser(socket.id);
+        // console.log('someone disconnected');
+        // removeUser(socket.id);
         
     })
 })
 
 //routes
 app.use(userRoutes)
+app.use(messageRoutes)
+app.use(chatbotRoutes)
 
 app.get("/", (req, res) => res.sendFile("index.html"));
 

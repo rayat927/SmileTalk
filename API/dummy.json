@@ -1,0 +1,38 @@
+{
+    "Users": [
+        {
+            "id": 123,
+            "name": "Leanne Graham",
+            "username": "Bret",
+            "email": "s@gmail.com",
+            "role": "therapist",
+            "chats": [
+                2987362874587324
+            ]
+        },
+        {
+            "id": 321,
+            "name": "Ervin Howell",
+            "username": "Antonette",
+            "email": "sa@gmail.com",
+            "role": "user",
+            "chats": [
+                2987362874587324
+            ]
+        }
+    ],
+
+    "Chats": [
+        {
+            "id": 2987362874587324,
+            "data": [
+                {
+                    "message": "Hello",
+                    "sender": 123,
+                    "receiver": 321,
+                    "time": "2020-01-01T00:00:00.000Z"
+                }
+            ]
+        }
+    ]
+}
